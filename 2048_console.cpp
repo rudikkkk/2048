@@ -52,10 +52,10 @@ struct Matrix
 
   Matrix ()
   {
-    board = {std::vector<int>{2, 4, 8, 0},    // Строки комментариев
-             std::vector<int>{2, 0, 0, 0},    // нужны чтобы
-             std::vector<int>{2, 0, 0, 0},    // автоформатирование
-             std::vector<int>{0, 0, 0, 16}};  // не переносило матрицу
+    board = {std::vector<int>{0, 0, 0, 0},   // Строки комментариев
+             std::vector<int>{0, 0, 0, 0},   // нужны чтобы
+             std::vector<int>{0, 0, 0, 0},   // автоформатирование
+             std::vector<int>{0, 0, 0, 0}};  // не переносило матрицу
   }
 
   Line& operator[] (int index) { return board[index]; }
@@ -386,7 +386,8 @@ void game ()
   std::cout << "Welcome to 2048 game!\n"
             << "enter w/a/s/d to start" << std::endl;
   Matrix board;
-  char direction{'w'};
+  char direction{' '};
+  board.new_block();
   board.print();
   do
   {
