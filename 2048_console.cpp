@@ -2,6 +2,7 @@
 #include <random>
 #include <vector>
 
+// генерирует случайное число от 1 до x
 auto random_number (int x)
 {
   std::random_device rd;
@@ -30,6 +31,7 @@ std::ostream& operator<< (std::ostream& os, Line l)
   return os;
 }
 
+// считает кол-во пустых клеток на игровом поле
 int count_blank (std::vector<Line> board)
 {
   int counter{0};
@@ -69,21 +71,23 @@ struct Matrix
     return os;
   }
 
-  bool is_full ()
-  {
-    for (int i{0}; i < 4; ++i)
-    {
-      for (int j{0}; j < 4; ++j)
-      {
-        if (board[i][j] == 0)
-        {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
+  // вырезано за ненадобностью
+  //   bool is_full ()
+  //   {
+  //     for (int i{0}; i < 4; ++i)
+  //     {
+  //       for (int j{0}; j < 4; ++j)
+  //       {
+  //         if (board[i][j] == 0)
+  //         {
+  //           return false;
+  //         }
+  //       }
+  //     }
+  //     return true;
+  //   }
 
+  // сдвигает все блоки на игровом поле вверх, совмещая одинаковые
   void up ()
   {
     for (int x{0}; x < 4; ++x)
@@ -140,6 +144,7 @@ struct Matrix
     }
   }
 
+  // сдвигает все блоки на игровом поле вниз, совмещая одинаковые
   void down ()
   {
     for (int x{0}; x < 4; ++x)
@@ -196,6 +201,7 @@ struct Matrix
     }
   }
 
+  // сдвигает все блоки на игровом поле влево, совмещая одинаковые
   void left ()
   {
     for (int y{0}; y < 4; ++y)
@@ -252,6 +258,7 @@ struct Matrix
     }
   }
 
+  // сдвигает все блоки на игровом поле вправо, совмещая одинаковые
   void right ()
   {
     for (int y{0}; y < 4; ++y)
@@ -308,6 +315,7 @@ struct Matrix
     }
   }
 
+  // печатает матрицу игрового поля в понятном для игрока виде
   void print ()
   {
     for (int i{0}; i < 4; ++i)
@@ -320,26 +328,39 @@ struct Matrix
     }
   }
 
-  void new_block ()
+  /*
+  функция добавляет на игровое поле новый блок, возвращает:
+  true - успешно добавлен,
+  false - недостаточно свободного места
+  */
+  bool new_block ()
   {
-    int n = random_number(count_blank(board));
-
-    int block = (random_number(100) <= 10) ? 4 : 2;
-    // с шансом 10% блок равен 4, 90% - 2
-
-    int c = 0;
-    for (int i{0}; i < 4; ++i)
+    if (count_blank(board))
     {
-      for (int j{0}; j < 4; ++j)
+      int n = random_number(count_blank(board));
+
+      int block = (random_number(100) <= 10) ? 4 : 2;
+      // с шансом 10% блок равен 4, 90% - 2
+
+      int c = 0;
+      for (int i{0}; i < 4; ++i)
       {
-        if (board[i][j] == 0)
+        for (int j{0}; j < 4; ++j)
         {
-          if (++c == n)
+          if (board[i][j] == 0)
           {
-            board[i][j] = block;
+            if (++c == n)
+            {
+              board[i][j] = block;
+            }
           }
         }
       }
+      return true;
+    }
+    else
+    {
+      return false;
     }
   }
 
@@ -359,6 +380,7 @@ struct Matrix
   }
 };
 
+// вызывает методы сдвигающие блоки в соответствующих направлениях
 void move (Matrix& board, char direction)
 {
   switch (direction)
@@ -381,6 +403,12 @@ void move (Matrix& board, char direction)
   }
 }
 
+void clear_console () { std::cout << "\033[2J" << std::endl; }
+
+/*
+отвечает за игровой процесс
+(вызов функций/методов, проверку условий победы/поражения)
+*/
 void game ()
 {
   std::cout << "Welcome to 2048 game!\n"
@@ -392,11 +420,14 @@ void game ()
   do
   {
     std::cin >> direction;
+    clear_console();
     move(board, direction);
-    board.new_block();
-    board.print();
+    if (board.new_block())
+      board.print();
+    else
+      break;
   }
-  while (!board.is_full() && !board.is_win());
+  while (!board.is_win());
 
   if (board.is_win())
   {
