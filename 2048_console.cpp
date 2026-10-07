@@ -320,12 +320,40 @@ struct Matrix
   {
     for (int i{0}; i < 4; ++i)
     {
+      std::cout << "---------------------" << '\n' << '|';
       for (int j{0}; j < 4; ++j)
       {
-        std::cout << '\t' << board[i][j];
+        switch (board[i][j])
+        {
+        case 0:
+          std::cout << "    |";
+          break;
+        case 2:
+        case 4:
+        case 8:
+          std::cout << "  " << board[i][j] << " |";
+          break;
+        case 16:
+        case 32:
+        case 64:
+          std::cout << ' ' << board[i][j] << " |";
+          break;
+        case 128:
+        case 256:
+        case 512:
+          std::cout << ' ' << board[i][j] << '|';
+          break;
+        case 1024:
+        case 2048:
+          std::cout << board[i][j] << '|';
+          break;
+        default:
+          break;
+        }
       }
-      std::cout << std::endl;
+      std::cout << '\n';
     }
+    std::cout << "---------------------" << std::endl;
   }
 
   /*
